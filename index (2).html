@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>Spartak Family — безопасная проверка photos</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;padding:22px 16px;font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:#f8f7f8;background:#141821}main{max-width:650px;margin:auto}
+    h1{font-size:clamp(24px,4vw,29px);line-height:1.2}section{background:#222936;border-radius:14px;padding:20px;margin:16px 0}p{line-height:1.5}
+    button{padding:14px 18px;border:0;border-radius:12px;background:#d32336;color:white;font-size:16px;font-weight:700;cursor:pointer}
+    button:disabled{opacity:.53;cursor:default}.muted{color:#bac3d3}.warning{color:#ffe0a2}.status{white-space:pre-wrap;overflow-wrap:anywhere;font-weight:500}
+    .brand{color:#ff6171}code{color:#f5d0d8}
+  </style>
+  <script src="https://unpkg.com/@vkontakte/vk-bridge@2.15.0/dist/browser.min.js"></script>
+</head>
+<body>
+<main>
+  <h1><span class="brand">●</span> ⚪ Spartak Family — проверка загрузки</h1>
+  <section>
+    <p>Эта страница проверяет, разрешает ли VK API получение адреса сервера для загрузки фотографии на стену сообщества <strong>212502839</strong>.</p>
+    <p class="warning"><strong>Безопасная проверка:</strong> токен не показывается и не копируется, фотографии не загружаются, записи не публикуются. Используется только метод <code>photos.getWallUploadServer</code>.</p>
+    <p class="muted">Тестовая страница публична на GitHub Pages. VK Bridge загружается из unpkg.com. Не используйте эту страницу для хранения токенов.</p>
+  </section>
+  <section>
+    <p id="status" class="status" aria-live="polite">Инициализация VK Bridge…</p>
+    <button id="test" disabled>Проверить доступ к фото</button>
+  </section>
+  <p class="muted">Доступ к VK Bridge возможен при запуске из <code>vk.com/app54814503</code>. Держите <code>VK_AUTO_PUBLISH=0</code> в AutoSMM.</p>
+</main>
+<script>
+(() => {
+  'use strict';
+  const status = document.getElementById('status');
+  const button = document.getElementById('test');
+  const info = (s) => { status.textContent = s; };
+  if (!window.vkBridge) {
+    info('Не удалось загрузить VK Bridge. Проверьте подключение к Интернету.');
+    return;
+  }
+  vkBridge.send('VKWebAppInit').then(() => {
+    info('VK Bridge подключён. Можно провести проверку без копирования токена.');
+    button.disabled = false;
+  }).catch(() => info('Откройте эту страницу внутри приложения ВКонтакте — vk.com/app54814503.'));
+
+  button.addEventListener('click', async () => {
+    button.disabled = true;
+    info('Проверяем разрешение photos и доступ к серверу загрузки…');
+    try {
+      // VK returns a short-lived token into memory only, with user consent.
+      const granted = await vkBridge.send('VKWebAppGetAuthToken', {app_id:54814503, scope:'photos'});
+      if (!granted || typeof granted.access_token !== 'string' || !granted.access_token) {
+        info('VK не выдал токен photos. Публикация не выполнялась.');
+        return;
+      }
+      const result = await vkBridge.send('VKWebAppCallAPIMethod', {
+        method:'photos.getWallUploadServer',
+        params:{access_token:granted.access_token, group_id:212502839, v:'5.199'}
+      });
+      const response = result && (result.response || result);
+      if (response && typeof response.upload_url === 'string' && response.upload_url.length > 0) {
+        info('УСПЕШНО: VK API вернул адрес сервера загрузки фотографии.\nНикакие файлы не загружены, посты не созданы.\nТокен и сам адрес на странице не показываются.');
+      } else {
+        info('VK ответил без адреса загрузки. Никаких файлов и постов не создано.');
+      }
+    } catch (error) {
+      const code = error?.error_data?.error_code ?? error?.error_code ?? null;
+      const kind = typeof error?.error_type === 'string' ? error.error_type.replace(/[^a-zA-Z0-9_ -]/g,'').slice(0,50) : null;
+      // Never display arbitrary error messages or response payloads: they might contain secrets.
+      info('Проверка не прошла. ' + (code !== null ? 'Код VK: ' + String(code).replace(/[^0-9]/g,'') + '.' : (kind ? 'Тип ошибки: ' + kind + '.' : 'VK отклонил запрос.')) + '\nНикаких файлов и постов не создано.');
+    } finally {
+      button.disabled = false;
+    }
+  });
+})();
+</script>
+</body>
+</html>
