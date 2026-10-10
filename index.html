@@ -1,78 +1,97 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="referrer" content="no-referrer">
-  <title>Spartak Family — безопасная проверка photos</title>
-  <style>
-    *{box-sizing:border-box}body{margin:0;padding:22px 16px;font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:#f8f7f8;background:#141821}main{max-width:650px;margin:auto}
-    h1{font-size:clamp(24px,4vw,29px);line-height:1.2}section{background:#222936;border-radius:14px;padding:20px;margin:16px 0}p{line-height:1.5}
-    button{padding:14px 18px;border:0;border-radius:12px;background:#d32336;color:white;font-size:16px;font-weight:700;cursor:pointer}
-    button:disabled{opacity:.53;cursor:default}.muted{color:#bac3d3}.warning{color:#ffe0a2}.status{white-space:pre-wrap;overflow-wrap:anywhere;font-weight:500}
-    .brand{color:#ff6171}code{color:#f5d0d8}
-  </style>
-  <script src="https://unpkg.com/@vkontakte/vk-bridge@2.15.0/dist/browser.min.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Spartak Family — тестовая загрузка PNG</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#141820;color:#f5f6f9;font-family:system-ui,'Segoe UI',sans-serif;padding:22px}
+main{margin:auto;max-width:660px}h1{font-size:clamp(24px,5vw,31px);line-height:1.25}
+section{background:#222b39;padding:20px;border-radius:16px;margin:16px 0;line-height:1.55}
+input[type=file]{width:100%;padding:13px;border:1px solid #687487;border-radius:10px;background:#101823;color:white}
+label{display:flex;align-items:flex-start;gap:10px;margin:15px 0}label input{transform:scale(1.2);margin-top:5px}
+button{background:#c92238;color:white;padding:14px 18px;border:0;border-radius:11px;font-size:16px;font-weight:700;cursor:pointer}
+button:disabled{opacity:.45;cursor:not-allowed}small,.muted{color:#c1cad6}.warning{color:#ffe3a2}
+#status{white-space:pre-wrap;overflow-wrap:anywhere}.brand{color:#fa4359}code{color:#ffcbd1}
+</style>
+<script src="https://unpkg.com/@vkontakte/vk-bridge@2.15.0/dist/browser.min.js"></script>
 </head>
-<body>
-<main>
-  <h1><span class="brand">●</span> ⚪ Spartak Family — проверка загрузки</h1>
-  <section>
-    <p>Эта страница проверяет, разрешает ли VK API получение адреса сервера для загрузки фотографии на стену сообщества <strong>212502839</strong>.</p>
-    <p class="warning"><strong>Безопасная проверка:</strong> токен не показывается и не копируется, фотографии не загружаются, записи не публикуются. Используется только метод <code>photos.getWallUploadServer</code>.</p>
-    <p class="muted">Тестовая страница публична на GitHub Pages. VK Bridge загружается из unpkg.com. Не используйте эту страницу для хранения токенов.</p>
-  </section>
-  <section>
-    <p id="status" class="status" aria-live="polite">Инициализация VK Bridge…</p>
-    <button id="test" disabled>Проверить доступ к фото</button>
-  </section>
-  <p class="muted">Доступ к VK Bridge возможен при запуске из <code>vk.com/app54814503</code>. Держите <code>VK_AUTO_PUBLISH=0</code> в AutoSMM.</p>
+<body><main>
+<h1><span class="brand">🔴</span> ⚪ Spartak Family — загрузка фото</h1>
+<section><strong>Проверка для сообщества 212502839.</strong>
+<p>Выберите одну тестовую картинку PNG/JPEG с компьютера. Изображение будет отправлено на сервер ВКонтакте и сохранено в фотографиях сообщества, <strong>но запись на стене создана не будет</strong>.</p>
+<p class="warning">Сохранённое изображение может стать доступным в разделе фотографий сообщества. Не выбирайте личные или конфиденциальные снимки. Этот тест ещё не делает публикации автоматическими.</p></section>
+<section>
+<p><strong>1. Выберите изображение</strong></p>
+<input id="photo" type="file" accept="image/png,image/jpeg">
+<label><input id="consent" type="checkbox"><span>Я согласен загрузить выбранное изображение в фотографии Spartak Family. Понимаю, что оно может стать публичным, но пост на стене не будет создан.</span></label>
+<button id="upload" disabled>Загрузить тестовое изображение в VK</button>
+<p id="status" role="status">Подключаемся к VK Bridge…</p>
+</section>
+<p class="muted"><small>Приложение должно быть открыто внутри VK (vk.com/app54814503). Токен используется только в памяти страницы, никуда не записывается, не копируется и не выводится. VK Bridge загружается с unpkg.com. Не загружайте файл .env в GitHub. VK_AUTO_PUBLISH=0 пока не меняйте.</small></p>
 </main>
 <script>
 (() => {
   'use strict';
+  const photo = document.getElementById('photo');
+  const consent = document.getElementById('consent');
+  const btn = document.getElementById('upload');
   const status = document.getElementById('status');
-  const button = document.getElementById('test');
-  const info = (s) => { status.textContent = s; };
-  if (!window.vkBridge) {
-    info('Не удалось загрузить VK Bridge. Проверьте подключение к Интернету.');
-    return;
-  }
-  vkBridge.send('VKWebAppInit').then(() => {
-    info('VK Bridge подключён. Можно провести проверку без копирования токена.');
-    button.disabled = false;
-  }).catch(() => info('Откройте эту страницу внутри приложения ВКонтакте — vk.com/app54814503.'));
-
-  button.addEventListener('click', async () => {
-    button.disabled = true;
-    info('Проверяем разрешение photos и доступ к серверу загрузки…');
+  let ready = false, busy = false;
+  function say(message) {status.textContent = message;}
+  function refresh() {btn.disabled = !ready || busy || !consent.checked || !photo.files || photo.files.length !== 1;}
+  photo.addEventListener('change',refresh);
+  consent.addEventListener('change',refresh);
+  if (!window.vkBridge) {say('Библиотека VK Bridge не загрузилась.'); return;}
+  vkBridge.send('VKWebAppInit')
+    .then(() => {ready = true; say('VK Bridge подключён. Выберите файл и подтвердите согласие.'); refresh();})
+    .catch(() => say('Откройте страницу внутри приложения VK, а не напрямую через GitHub Pages.'));
+  btn.addEventListener('click', async () => {
+    const file = photo.files && photo.files[0];
+    if (!ready || busy || !consent.checked || !file) return;
+    if (!['image/jpeg','image/png'].includes(file.type) || file.size===0 || file.size>15*1024*1024) {say('Нужна PNG/JPEG-картинка размером до 15 МБ.'); return;}
+    busy = true; refresh();
     try {
-      // VK returns a short-lived token into memory only, with user consent.
-      const granted = await vkBridge.send('VKWebAppGetAuthToken', {app_id:54814503, scope:'photos'});
-      if (!granted || typeof granted.access_token !== 'string' || !granted.access_token) {
-        info('VK не выдал токен photos. Публикация не выполнялась.');
-        return;
-      }
-      const result = await vkBridge.send('VKWebAppCallAPIMethod', {
-        method:'photos.getWallUploadServer',
-        params:{access_token:granted.access_token, group_id:212502839, v:'5.199'}
+      say('1/3. Получаем разрешение на фотографии…');
+      const auth = await vkBridge.send('VKWebAppGetAuthToken',{app_id:54814503,scope:'photos'});
+      if (!auth || !auth.access_token) throw new Error('AUTH');
+      const token=auth.access_token;
+      say('1/3. Получаем сервер загрузки…');
+      const urlResult = await vkBridge.send('VKWebAppCallAPIMethod',{
+        method:'photos.getWallUploadServer',params:{group_id:212502839,access_token:token,v:'5.199'}
       });
-      const response = result && (result.response || result);
-      if (response && typeof response.upload_url === 'string' && response.upload_url.length > 0) {
-        info('УСПЕШНО: VK API вернул адрес сервера загрузки фотографии.\nНикакие файлы не загружены, посты не созданы.\nТокен и сам адрес на странице не показываются.');
-      } else {
-        info('VK ответил без адреса загрузки. Никаких файлов и постов не создано.');
-      }
+      const uploadInfo = urlResult && (urlResult.response || urlResult);
+      if (!uploadInfo || typeof uploadInfo.upload_url!=='string') throw new Error('NO_URL');
+      const remoteUrl = new URL(uploadInfo.upload_url);
+      if (remoteUrl.protocol!=='https:') throw new Error('UNSAFE_URL');
+      const hostname=remoteUrl.hostname.toLowerCase();
+      const goodHost=['vk.com','userapi.com','vkuser.net','vkuseraudio.net','vk-cdn.net'].some(domain => hostname===domain || hostname.endsWith('.'+domain));
+      if (!goodHost) throw new Error('UNEXPECTED_HOST');
+      say('2/3. Отправляем картинку на сервер VK…');
+      const form=new FormData();form.append('photo',file,file.name);
+      let sent;
+      try {sent=await fetch(remoteUrl.toString(),{method:'POST',body:form,mode:'cors',credentials:'omit'});}
+      catch (_) {throw new Error('BROWSER_CORS');}
+      if (!sent.ok) throw new Error('UPLOAD_HTTP');
+      const uploaded=await sent.json();
+      if (!uploaded || uploaded.photo===undefined || uploaded.server===undefined || !uploaded.hash) throw new Error('BAD_UPLOAD');
+      say('3/3. Сохраняем загруженное фото в VK…');
+      const savedResult=await vkBridge.send('VKWebAppCallAPIMethod',{
+        method:'photos.saveWallPhoto',
+        params:{group_id:212502839,photo:uploaded.photo,server:uploaded.server,hash:uploaded.hash,access_token:token,v:'5.199'}
+      });
+      const saved=savedResult && (savedResult.response || savedResult);
+      const photoEntry=Array.isArray(saved)?saved[0]:(saved && saved.items && saved.items[0]);
+      if (!photoEntry || !Number.isSafeInteger(Number(photoEntry.id)) || !Number.isSafeInteger(Number(photoEntry.owner_id))) throw new Error('SAVE_RESPONSE');
+      say('УСПЕШНО! Картинка сохранена в ВКонтакте. Запись на стене НЕ создана.\nID изображения: photo'+photoEntry.owner_id+'_'+photoEntry.id+'\nТокен нигде не показан.');
     } catch (error) {
-      const code = error?.error_data?.error_code ?? error?.error_code ?? null;
-      const kind = typeof error?.error_type === 'string' ? error.error_type.replace(/[^a-zA-Z0-9_ -]/g,'').slice(0,50) : null;
-      // Never display arbitrary error messages or response payloads: they might contain secrets.
-      info('Проверка не прошла. ' + (code !== null ? 'Код VK: ' + String(code).replace(/[^0-9]/g,'') + '.' : (kind ? 'Тип ошибки: ' + kind + '.' : 'VK отклонил запрос.')) + '\nНикаких файлов и постов не создано.');
-    } finally {
-      button.disabled = false;
-    }
+      const code=error?.error_data?.error_code??error?.error_code;
+      const known=['AUTH','NO_URL','UNSAFE_URL','UNEXPECTED_HOST','BROWSER_CORS','UPLOAD_HTTP','BAD_UPLOAD','SAVE_RESPONSE'];
+      const type=known.includes(error?.message)?error.message:'VK_ERROR';
+      say('Проверка не завершена. Причина: '+type+(Number.isInteger(code)?' (код VK '+code+')':'')+'.\nЗапись на стене НЕ создана.\nПри ошибке браузерной политики BROWSER_CORS загрузка через GitHub Pages может быть заблокирована — это не ошибка разрешения photos.');
+    } finally {busy=false;refresh();}
   });
 })();
 </script>
-</body>
-</html>
+</body></html>
