@@ -1,15 +1,116 @@
 <!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>Spartak Family — подключение Studio</title><style>
 :root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#111216;color:#f6f6f8;font:16px/1.6 system-ui,'Segoe UI',sans-serif;padding:24px}main{max-width:640px;margin:0 auto}h1{font-size:28px;line-height:1.25;letter-spacing:-.6px}section{padding:22px;background:#1b1d24;border:1px solid #363842;border-radius:14px;margin:18px 0}h2{font-size:19px;margin:0 0 8px}p{color:#b8bbc6;font-size:14px}.tag{color:#ff8996;letter-spacing:2px;font-size:11px}button{font:inherit;border:0;border-radius:8px;padding:12px 16px;background:#ef3f50;color:white;cursor:pointer;font-weight:600;margin:7px 7px 7px 0}button.alt{background:#343741}button:disabled{opacity:.5}input{width:100%;background:#111216;border:1px solid #4b4f5b;padding:12px;border-radius:8px;color:#f6f6f8;font:16px monospace}.hidden{display:none}.status{font-size:13px;white-space:pre-wrap}a{color:#ffa1ac}small{color:#a7aab5;font-size:12px}
-</style><script src="https://unpkg.com/@vkontakte/vk-bridge@2.15.0/dist/browser.min.js"></script></head><body><main><span class="tag">SPARTAK FAMILY · STUDIO 5.0</span><h1>Подключение вашей группы</h1><p>Получите два доступа ВКонтакте и вставьте их в приложение на компьютере. Эта страница ничего не публикует.</p><section><h2>1. Ключ сообщества</h2><p>Для публикации записей от имени Spartak Family. Если ключ уже сохранён в Studio, повторно получать его не нужно.</p><button id="groupRequest" disabled>Разрешить работу со стеной</button><div id="groupBox" class="hidden"><input id="groupSecret" type="password" readonly autocomplete="off" spellcheck="false" aria-label="Ключ сообщества"><button id="groupCopy" class="alt">Скопировать ключ сообщества</button><button id="groupSelect" class="alt">Выделить для Ctrl+C</button></div><p id="groupStatus" class="status"></p></section><section><h2>2. Доступ к фотографиям</h2><p>Нужен для загрузки фирменных карточек в группу. Запрашивается только разрешение photos.</p><button id="photoRequest" disabled>Разрешить загрузку фото</button><div id="photoBox" class="hidden"><input id="photoSecret" type="password" readonly autocomplete="off" spellcheck="false" aria-label="Пользовательский ключ фото"><button id="photoCopy" class="alt">Скопировать ключ фото</button><button id="photoSelect" class="alt">Выделить для Ctrl+C</button></div><p id="photoStatus" class="status"></p></section><section><h2>3. Вернитесь в Studio</h2><p>«Подключение группы» → вставьте ключи в соответствующие поля → «Сохранить ключи» → «Проверить подключение».</p><p>После успешной проверки можно включить автопубликацию. При истечении доступа Studio остановит отправку и попросит обновить ключ.</p></section><p id="status" class="status">Подключаемся к VK…</p><small>Ключи хранятся только в памяти этой вкладки. Не отправляйте их в чат и не публикуйте. Закройте вкладку после переноса. Открывать внутри <a href="https://vk.com/app54814503">vk.com/app54814503</a>. VK Bridge загружается с unpkg.com.</small></main><script>
+</style><script src="https://unpkg.com/@vkontakte/vk-bridge@2.15.0/dist/browser.min.js"></script></head><body><main><span class="tag">SPARTAK FAMILY · ПОДКЛЮЧЕНИЕ 5.0.1</span><h1>Подключение вашей группы</h1><p>Получите два доступа ВКонтакте и вставьте их в приложение на компьютере. Эта страница ничего не публикует.</p><section><h2>1. Ключ сообщества</h2><p>Для публикации записей от имени Spartak Family. Если ключ уже сохранён в Studio, повторно получать его не нужно.</p><button id="groupRequest" disabled>Разрешить работу со стеной</button><div id="groupBox" class="hidden"><input id="groupSecret" type="password" readonly autocomplete="off" spellcheck="false" aria-label="Ключ сообщества"><button id="groupCopy" class="alt">Скопировать ключ сообщества</button><button id="groupSelect" class="alt">Показать и выделить ключ</button></div><p id="groupStatus" class="status" role="status" aria-live="polite"></p></section><section><h2>2. Доступ к фотографиям</h2><p>Нужен для загрузки фирменных карточек в группу. Запрашивается только разрешение photos.</p><button id="photoRequest" disabled>Разрешить загрузку фото</button><div id="photoBox" class="hidden"><input id="photoSecret" type="password" readonly autocomplete="off" spellcheck="false" aria-label="Пользовательский ключ фото"><button id="photoCopy" class="alt">Скопировать ключ фото</button><button id="photoSelect" class="alt">Показать и выделить ключ</button></div><p id="photoStatus" class="status" role="status" aria-live="polite"></p></section><section><h2>3. Вернитесь в Studio</h2><p>«Подключение группы» → вставьте ключи в соответствующие поля → «Сохранить ключи» → «Проверить подключение».</p><p>После успешной проверки можно включить автопубликацию. При истечении доступа Studio остановит отправку и попросит обновить ключ.</p></section><p id="status" class="status">Подключаемся к VK…</p><small>Ключи хранятся только в памяти этой вкладки. Не отправляйте их в чат и не публикуйте. Закройте вкладку после переноса. Открывать внутри <a href="https://vk.com/app54814503">vk.com/app54814503</a>. VK Bridge загружается с unpkg.com.</small></main><script>
 (()=>{'use strict';const $=id=>document.getElementById(id),app=54814503,group=212502839;
-function select(kind){const e=$(kind+'Secret');e.focus();e.select();e.setSelectionRange(0,e.value.length);$(kind+'Status').textContent='Ключ выделен. Нажмите Ctrl+C и вставьте в соответствующее поле Studio.'}
-async function copy(kind){const value=$(kind+'Secret').value;if(!value)return;try{await navigator.clipboard.writeText(value);$(kind+'Status').textContent='Скопировано. Вставьте ключ в соответствующее поле Studio.'}catch(e){select(kind);try{if(document.execCommand('copy'))$(kind+'Status').textContent='Скопировано. Вставьте ключ в Studio.'}catch(e){}}}
-for(const k of ['group','photo']){$(k+'Copy').onclick=()=>copy(k);$(k+'Select').onclick=()=>select(k)}
+const hideTimers = {}, kinds = ['group', 'photo'];
+let copying = false;
+function hide(kind) {
+  clearTimeout(hideTimers[kind]);
+  $(kind + 'Secret').type = 'password';
+  $(kind + 'Select').textContent = 'Показать и выделить ключ';
+  $(kind + 'Hide').hidden = true;
+}
+function select(kind) {
+  const field = $(kind + 'Secret');
+  if (!field.value) return;
+  clearTimeout(hideTimers[kind]);
+  field.type = 'text';
+  field.focus();
+  field.select();
+  field.setSelectionRange(0, field.value.length);
+  $(kind + 'Select').textContent = 'Выделить весь ключ';
+  $(kind + 'Hide').hidden = false;
+  $(kind + 'Status').textContent = 'Ключ показан и выделен. Нажмите Ctrl+C, затем Ctrl+V в соответствующем поле Studio. Ключ скроется через минуту.';
+  hideTimers[kind] = setTimeout(() => hide(kind), 60000);
+}
+// A password input may report a successful copy without copying its contents.
+// Use a temporary plain-text field for the legacy clipboard fallback.
+function legacyCopy(value) {
+  const previous = document.activeElement;
+  const field = document.createElement('textarea');
+  field.value = value;
+  field.readOnly = true;
+  field.style.cssText = 'position:fixed;left:-9999px;top:0;width:1px;height:1px;opacity:0';
+  document.body.appendChild(field);
+  try {
+    field.focus();
+    field.select();
+    field.setSelectionRange(0, value.length);
+    return document.execCommand('copy') === true;
+  } catch (_) {
+    return false;
+  } finally {
+    field.value = '';
+    field.remove();
+    if (previous && previous.focus) previous.focus();
+  }
+}
+function bounded(promise, ms) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error('COPY_TIMEOUT')), ms);
+    Promise.resolve(promise).then(
+      value => { clearTimeout(timer); resolve(value); },
+      error => { clearTimeout(timer); reject(error); }
+    );
+  });
+}
+async function copy(kind) {
+  const value = $(kind + 'Secret').value;
+  if (!value || copying) return;
+  copying = true;
+  for (const k of kinds) $(k + 'Copy').disabled = true;
+  $(kind + 'Status').textContent = 'Копируем ключ…';
+  let copied = false;
+  try {
+    // VK's own clipboard method can work when the embedded page has no
+    // permission to use navigator.clipboard.
+    try {
+      if (window.vkBridge && vkBridge.supports('VKWebAppCopyText')) {
+        const result = await bounded(vkBridge.send('VKWebAppCopyText', {text: value}), 2500);
+        copied = result && result.result === true;
+      }
+    } catch (_) {}
+    if (!copied) {
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await bounded(navigator.clipboard.writeText(value), 1500);
+          copied = true;
+        }
+      } catch (_) {}
+    }
+    if (!copied) copied = legacyCopy(value);
+    if (copied) {
+      hide(kind);
+      $(kind + 'Status').textContent = 'Ключ скопирован. Вернитесь в Studio и нажмите Ctrl+V в соответствующем поле.';
+    } else {
+      // Never claim success when every automatic route failed.
+      select(kind);
+      $(kind + 'Status').textContent = 'Автоматическое копирование недоступно. Ключ показан и выделен: нажмите Ctrl+C, затем Ctrl+V в Studio.';
+    }
+  } finally {
+    copying = false;
+    for (const k of kinds) $(k + 'Copy').disabled = false;
+  }
+}
+for (const k of kinds) {
+  const hideButton = document.createElement('button');
+  hideButton.id = k + 'Hide';
+  hideButton.className = 'alt';
+  hideButton.textContent = 'Скрыть ключ';
+  hideButton.hidden = true;
+  hideButton.onclick = () => hide(k);
+  $(k + 'Box').appendChild(hideButton);
+  $(k + 'Copy').onclick = () => copy(k);
+  $(k + 'Select').onclick = () => select(k);
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) for (const k of kinds) hide(k);
+});
 function fail(kind,e){const code=e?.error_data?.error_code??e?.error_code;$(kind+'Status').textContent='ВК не выдал доступ.'+(Number.isInteger(code)?' Код: '+code+'.':'')+(kind==='group'?' Можно использовать ключ из раздела «Работа с API» в управлении сообществом.':' Откройте приложение внутри VK и повторите запрос.');}
 async function request(kind){$(kind+'Request').disabled=true;$(kind+'Status').textContent='Ожидаем разрешение ВКонтакте…';try{let method='VKWebAppGetAuthToken',params={app_id:app,scope:'photos'};if(kind==='group'){method=['VKWebAppGetCommunityToken','VKWebAppGetCommunityAuthToken','VKWebAppCommunityToken','VKWebAppCommunityAccessToken'].find(x=>vkBridge.supports(x));if(!method)throw Error('UNSUPPORTED');params={app_id:app,group_id:group,scope:'wall'}}const a=await vkBridge.send(method,params);if(!a||typeof a.access_token!=='string'||!a.access_token)throw Error('NO_TOKEN');if(kind==='photo'&&typeof a.scope==='string'&&!a.scope.split(',').includes('photos'))throw Error('NO_PHOTOS');$(kind+'Secret').value=a.access_token;$(kind+'Box').classList.remove('hidden');$(kind+'Status').textContent='Доступ получен. Скопируйте ключ кнопкой ниже и перенесите в Studio.'}catch(e){fail(kind,e)}finally{$(kind+'Request').disabled=false}}
 $('groupRequest').onclick=()=>request('group');$('photoRequest').onclick=()=>request('photo');
 if(!window.vkBridge){$('status').textContent='VK Bridge не загрузился. Проверьте интернет и повторно откройте приложение.';return}
 vkBridge.send('VKWebAppInit').then(()=>{$('status').textContent='Подключение к VK готово.';$('groupRequest').disabled=false;$('photoRequest').disabled=false}).catch(()=>{$('status').textContent='Откройте эту страницу внутри vk.com/app54814503, а не напрямую на GitHub Pages.'});
-window.addEventListener('pagehide',()=>{for(const k of ['group','photo'])$(k+'Secret').value=''});
+window.addEventListener('pagehide',()=>{for(const k of kinds){hide(k);$(k+'Secret').value='';$(k+'Box').classList.add('hidden')}});
 })();
 </script></body></html>
