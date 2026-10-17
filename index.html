@@ -1,68 +1,15 @@
-<!doctype html>
-<html lang="ru">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="referrer" content="no-referrer">
-<title>Spartak Family — перенос токена photos на компьютер</title>
-<style>
-:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#141820;color:#f5f6f9;font-family:system-ui,'Segoe UI',sans-serif;padding:20px}main{max-width:680px;margin:auto}h1{font-size:clamp(23px,4vw,30px)}section{background:#222b39;padding:20px;border-radius:15px;margin:14px 0;line-height:1.55}.notice{color:#ffe3a2}button{font:inherit;font-weight:700;border:0;border-radius:10px;padding:12px 16px;background:#ca2236;color:white;cursor:pointer;margin-right:8px;margin-top:7px}button:disabled{opacity:.48;cursor:wait}.alt{background:#43566d}#status{white-space:pre-wrap;overflow-wrap:anywhere}#secret{width:100%;background:#101923;border:1px solid #627186;border-radius:9px;padding:12px;color:transparent;caret-color:transparent;font-family:monospace;letter-spacing:.15em;font-size:17px}#box{display:none}code{color:#ffcad0}small{color:#c5ceda}
-</style>
-<script src="https://unpkg.com/@vkontakte/vk-bridge@2.15.0/dist/browser.min.js"></script>
-</head>
-<body><main>
-<h1>🔴⚪ Spartak Family — подключение фото</h1>
-<section>
-<p>Эта страница запрашивает у ВКонтакте пользовательский токен <strong>только с разрешением <code>photos</code></strong>. Она не публикует посты и не отправляет изображения.</p>
-<p class="notice"><strong>Токен — секрет!</strong> Не отправляйте его в чат, не делайте скриншотов с полем ввода и не загружайте файл <code>.env</code> на GitHub. Страница хранит токен только в оперативной памяти открытой вкладки. Библиотека VK Bridge загружается с unpkg.com.</p>
-</section>
-<section>
-<p id="status" role="status">Подключаемся к VK Bridge…</p>
-<button id="request" disabled>Получить доступ photos</button>
-<div id="box">
-<p>Токен получен. Он скрыт точками. Нажмите <strong>«Выделить»</strong>, затем <strong>Ctrl + C</strong>. Вставьте в <code>VK_USER_TOKEN=</code> локального файла <code>.env</code> на вашем Windows 11.</p>
-<input id="secret" type="text" readonly autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Скрытый пользовательский токен" />
-<button id="select" class="alt">Выделить токен</button>
-<button id="legacy" class="alt">Попробовать скопировать</button>
-<p id="copyStatus" role="status"></p>
-</div>
-</section>
-<p><small>Открывайте только внутри приложения <code>vk.com/app54814503</code>. В AutoSMM сохраняйте <code>VK_AUTO_PUBLISH=0</code>. После переноса токена закройте эту вкладку. Пользовательский токен может иметь ограниченный срок действия; для постоянной автоматизации потребуется проверить ограничения VK.</small></p>
-</main>
-<script>
-(() => {
-  'use strict';
-  const $ = id => document.getElementById(id);
-  const say = s => {$('status').textContent=s;};
-  const selectToken = () => {
-    const el=$('secret'); el.focus(); el.select(); el.setSelectionRange(0,el.value.length);
-    $('copyStatus').textContent='Выделено. Теперь нажмите Ctrl + C, откройте локальный .env и вставьте токен после VK_USER_TOKEN=';
-  };
-  $('select').addEventListener('click',selectToken);
-  $('legacy').addEventListener('click', () => {
-    selectToken();
-    const ok = document.execCommand && document.execCommand('copy');
-    $('copyStatus').textContent=ok ? 'Скопировано! Вставьте токен только в локальный .env.' : 'Браузер не разрешил автоматическое копирование. Поле выделено — попробуйте Ctrl + C.';
-  });
-  if(!window.vkBridge){say('VK Bridge не загрузился.');return;}
-  vkBridge.send('VKWebAppInit').then(() => {
-    say('VK Bridge подключён. Можно запросить право photos.');
-    $('request').disabled=false;
-  }).catch(() => say('Откройте эту страницу внутри vk.com/app54814503, а не отдельно на GitHub Pages.'));
-  $('request').addEventListener('click',async () => {
-    $('request').disabled=true; say('Запрашиваем разрешение photos у VK…');
-    try{
-      const auth=await vkBridge.send('VKWebAppGetAuthToken',{app_id:54814503,scope:'photos'});
-      if(!auth || typeof auth.access_token!=='string' || !auth.access_token)throw new Error('NO_TOKEN');
-      $('secret').value=auth.access_token;
-      $('box').style.display='block';
-      say('VK выдал токен с запрошенным правом photos. Значение скрыто; используйте ручное выделение и копирование.');
-    }catch(e){
-      const code=e?.error_data?.error_code??e?.error_code;
-      say('Не удалось получить токен.'+(Number.isInteger(code)?' Код VK: '+code:'')+' Никакие посты не публиковались.');
-    }finally{$('request').disabled=false;}
-  });
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>Spartak Family — подключение Studio</title><style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#111216;color:#f6f6f8;font:16px/1.6 system-ui,'Segoe UI',sans-serif;padding:24px}main{max-width:640px;margin:0 auto}h1{font-size:28px;line-height:1.25;letter-spacing:-.6px}section{padding:22px;background:#1b1d24;border:1px solid #363842;border-radius:14px;margin:18px 0}h2{font-size:19px;margin:0 0 8px}p{color:#b8bbc6;font-size:14px}.tag{color:#ff8996;letter-spacing:2px;font-size:11px}button{font:inherit;border:0;border-radius:8px;padding:12px 16px;background:#ef3f50;color:white;cursor:pointer;font-weight:600;margin:7px 7px 7px 0}button.alt{background:#343741}button:disabled{opacity:.5}input{width:100%;background:#111216;border:1px solid #4b4f5b;padding:12px;border-radius:8px;color:#f6f6f8;font:16px monospace}.hidden{display:none}.status{font-size:13px;white-space:pre-wrap}a{color:#ffa1ac}small{color:#a7aab5;font-size:12px}
+</style><script src="https://unpkg.com/@vkontakte/vk-bridge@2.15.0/dist/browser.min.js"></script></head><body><main><span class="tag">SPARTAK FAMILY · STUDIO 5.0</span><h1>Подключение вашей группы</h1><p>Получите два доступа ВКонтакте и вставьте их в приложение на компьютере. Эта страница ничего не публикует.</p><section><h2>1. Ключ сообщества</h2><p>Для публикации записей от имени Spartak Family. Если ключ уже сохранён в Studio, повторно получать его не нужно.</p><button id="groupRequest" disabled>Разрешить работу со стеной</button><div id="groupBox" class="hidden"><input id="groupSecret" type="password" readonly autocomplete="off" spellcheck="false" aria-label="Ключ сообщества"><button id="groupCopy" class="alt">Скопировать ключ сообщества</button><button id="groupSelect" class="alt">Выделить для Ctrl+C</button></div><p id="groupStatus" class="status"></p></section><section><h2>2. Доступ к фотографиям</h2><p>Нужен для загрузки фирменных карточек в группу. Запрашивается только разрешение photos.</p><button id="photoRequest" disabled>Разрешить загрузку фото</button><div id="photoBox" class="hidden"><input id="photoSecret" type="password" readonly autocomplete="off" spellcheck="false" aria-label="Пользовательский ключ фото"><button id="photoCopy" class="alt">Скопировать ключ фото</button><button id="photoSelect" class="alt">Выделить для Ctrl+C</button></div><p id="photoStatus" class="status"></p></section><section><h2>3. Вернитесь в Studio</h2><p>«Подключение группы» → вставьте ключи в соответствующие поля → «Сохранить ключи» → «Проверить подключение».</p><p>После успешной проверки можно включить автопубликацию. При истечении доступа Studio остановит отправку и попросит обновить ключ.</p></section><p id="status" class="status">Подключаемся к VK…</p><small>Ключи хранятся только в памяти этой вкладки. Не отправляйте их в чат и не публикуйте. Закройте вкладку после переноса. Открывать внутри <a href="https://vk.com/app54814503">vk.com/app54814503</a>. VK Bridge загружается с unpkg.com.</small></main><script>
+(()=>{'use strict';const $=id=>document.getElementById(id),app=54814503,group=212502839;
+function select(kind){const e=$(kind+'Secret');e.focus();e.select();e.setSelectionRange(0,e.value.length);$(kind+'Status').textContent='Ключ выделен. Нажмите Ctrl+C и вставьте в соответствующее поле Studio.'}
+async function copy(kind){const value=$(kind+'Secret').value;if(!value)return;try{await navigator.clipboard.writeText(value);$(kind+'Status').textContent='Скопировано. Вставьте ключ в соответствующее поле Studio.'}catch(e){select(kind);try{if(document.execCommand('copy'))$(kind+'Status').textContent='Скопировано. Вставьте ключ в Studio.'}catch(e){}}}
+for(const k of ['group','photo']){$(k+'Copy').onclick=()=>copy(k);$(k+'Select').onclick=()=>select(k)}
+function fail(kind,e){const code=e?.error_data?.error_code??e?.error_code;$(kind+'Status').textContent='ВК не выдал доступ.'+(Number.isInteger(code)?' Код: '+code+'.':'')+(kind==='group'?' Можно использовать ключ из раздела «Работа с API» в управлении сообществом.':' Откройте приложение внутри VK и повторите запрос.');}
+async function request(kind){$(kind+'Request').disabled=true;$(kind+'Status').textContent='Ожидаем разрешение ВКонтакте…';try{let method='VKWebAppGetAuthToken',params={app_id:app,scope:'photos'};if(kind==='group'){method=['VKWebAppGetCommunityToken','VKWebAppGetCommunityAuthToken','VKWebAppCommunityToken','VKWebAppCommunityAccessToken'].find(x=>vkBridge.supports(x));if(!method)throw Error('UNSUPPORTED');params={app_id:app,group_id:group,scope:'wall'}}const a=await vkBridge.send(method,params);if(!a||typeof a.access_token!=='string'||!a.access_token)throw Error('NO_TOKEN');if(kind==='photo'&&typeof a.scope==='string'&&!a.scope.split(',').includes('photos'))throw Error('NO_PHOTOS');$(kind+'Secret').value=a.access_token;$(kind+'Box').classList.remove('hidden');$(kind+'Status').textContent='Доступ получен. Скопируйте ключ кнопкой ниже и перенесите в Studio.'}catch(e){fail(kind,e)}finally{$(kind+'Request').disabled=false}}
+$('groupRequest').onclick=()=>request('group');$('photoRequest').onclick=()=>request('photo');
+if(!window.vkBridge){$('status').textContent='VK Bridge не загрузился. Проверьте интернет и повторно откройте приложение.';return}
+vkBridge.send('VKWebAppInit').then(()=>{$('status').textContent='Подключение к VK готово.';$('groupRequest').disabled=false;$('photoRequest').disabled=false}).catch(()=>{$('status').textContent='Откройте эту страницу внутри vk.com/app54814503, а не напрямую на GitHub Pages.'});
+window.addEventListener('pagehide',()=>{for(const k of ['group','photo'])$(k+'Secret').value=''});
 })();
-</script>
-</body>
-</html>
+</script></body></html>
